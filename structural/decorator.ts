@@ -1,7 +1,7 @@
 // Decorator Pattern Example in TypeScript
 // Патерн Decorator дозволяє "обгортати" об'єкти новою поведінкою, не змінюючи їхній код.
 
-interface IMessage {
+export interface IMessage {
 	send(): string;
 }
 
@@ -13,24 +13,34 @@ class SimpleMessage implements IMessage {
 }
 
 // Декоратори
-class UppercaseDecorator implements IMessage {
-	constructor(private message: IMessage) {}
+
+// Base Decorator
+abstract class MessageDecorator implements IMessage {
+	protected wrappee: IMessage;
+	constructor(message: IMessage) {
+		this.wrappee = message;
+	}
 	send(): string {
-		return this.message.send().toUpperCase();
+		return this.wrappee.send();
 	}
 }
 
-class ExclamationDecorator implements IMessage {
-	constructor(private message: IMessage) {}
+// Concrete Decorators
+class UppercaseDecorator extends MessageDecorator {
 	send(): string {
-		return `${this.message.send()}!!!`;
+		return super.send().toUpperCase();
 	}
 }
 
-class TimestampDecorator implements IMessage {
-	constructor(private message: IMessage) {}
+class ExclamationDecorator extends MessageDecorator {
 	send(): string {
-		return `[${new Date().toISOString()}] ${this.message.send()}`;
+		return `${super.send()}!!!`;
+	}
+}
+
+class TimestampDecorator extends MessageDecorator {
+	send(): string {
+		return `[${new Date().toISOString()}] ${super.send()}`;
 	}
 }
 
